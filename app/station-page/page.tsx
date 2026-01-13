@@ -1,4 +1,4 @@
-import { addStation, getStations } from "@/actions/stationActions";
+import { addStation, getStations } from "@/actions/station-actions";
 
 //async server component
 export default async function StationPage() {

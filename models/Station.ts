@@ -27,8 +27,8 @@ const StationSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["active", "under maintenance"],
-      default: "active",
+      enum: ["ACTIVE", "UNDER_MAINTENANCE"],
+      default: "ACTIVE",
     },
     qrCode: {
       type: String,
