@@ -34,6 +34,10 @@ const StationSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
+    assignedManagers: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Admins",
+    },
   },
   { timestamps: true }
 );

@@ -2,31 +2,43 @@ import type { NextAuthConfig } from "next-auth";
 
 export const authConfig = {
   pages: {
-    signIn: "/login", // redirects here if not authenticated
+    signIn: "/login",
   },
   callbacks: {
-    // executes before the request is completed. the gatekeeper for authentication
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
-      const isAdminPage = nextUrl.pathname.startsWith("/admin");
+      const isDashboard = nextUrl.pathname.startsWith("/dashboard");
+      const isAuthPage =
+        nextUrl.pathname === "/login" || nextUrl.pathname === "/sign-up";
 
-      if (isAdminPage) {
-        if (isLoggedIn) return true;
-        return false; // redirects to login if not logged in
+      // Redirect logged-in users away from auth pages
+      if (isAuthPage && isLoggedIn) {
+        return Response.redirect(new URL("/dashboard", nextUrl));
       }
+
+      // Protect dashboard routes
+      if (isDashboard) {
+        if (isLoggedIn) return true;
+        return false;
+      }
+
       return true;
     },
 
     async jwt({ token, user }) {
       if (user) {
+        token.id = user.id;
         token.role = user.role;
+        token.name = user.name;
       }
       return token;
     },
 
     async session({ session, token }) {
-      if (session.user && token.role) {
+      if (session.user) {
+        session.user.id = token.id as string;
         session.user.role = token.role as string;
+        session.user.name = token.name as string;
       }
       return session;
     },

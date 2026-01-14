@@ -41,4 +41,6 @@ yarn-error.log*
 next-env.d.ts
 
 # seed script for admin
-/scripts/seed-admin.ts
+/scripts/*
+
+.github/
