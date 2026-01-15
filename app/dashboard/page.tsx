@@ -1,9 +1,12 @@
-"use client";
+import { redirect } from "next/navigation";
+import { auth } from "@/auth";
 
-import { useSession } from "next-auth/react";
+export default async function DashboardPage() {
+  const session = await auth();
 
-export default function DashboardPage() {
-  const { data: session } = useSession();
+  if (!session?.user) {
+    redirect("/api/auth/signin?callbackUrl=/dashboard");
+  }
 
   return (
     <div className="space-y-8">

@@ -11,6 +11,10 @@ const AdminSchema = new mongoose.Schema(
       enum: ["SUPER_ADMIN", "STATION_MANAGER"],
     },
     image: { type: String },
+    station: {
+      type: String, 
+      enum:[]
+    }
   },
   { timestamps: true }
 );
