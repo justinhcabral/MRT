@@ -5,6 +5,7 @@ import { connectToDB } from "@/lib/mongodb";
 import { Admin } from "@/models/Admins";
 import bcrypt from "bcryptjs";
 import { AuthError } from "next-auth";
+import { signUpSchema } from "@/types/zodtypes";
 
 export type AuthState = {
   error?: string;
@@ -41,33 +42,27 @@ export async function signUpAction(
   formData: FormData
 ): Promise<AuthState> {
   try {
+    // Parse and validate input
+    const result = signUpSchema.safeParse({
+      name: formData.get("name"),
+      email: formData.get("email"),
+      password: formData.get("password"),
+      confirmPassword: formData.get("confirmPassword"),
+      role: formData.get("role"),
+    });
+
+    if (!result.success) {
+      // Return first validation error
+      const firstError = result.error.issues[0];
+      return { error: firstError.message };
+    }
+
+    const { name, email, password, role } = result.data;
+
     await connectToDB();
 
-    const name = formData.get("name") as string;
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    const confirmPassword = formData.get("confirmPassword") as string;
-    const role = formData.get("role") as string;
-
-    // Validation
-    if (!name || !email || !password || !role) {
-      return { error: "All fields are required" };
-    }
-
-    if (password.length < 8) {
-      return { error: "Password must be at least 8 characters" };
-    }
-
-    if (password !== confirmPassword) {
-      return { error: "Passwords do not match" };
-    }
-
-    if (!["SUPER_ADMIN", "STATION_MANAGER"].includes(role)) {
-      return { error: "Invalid role selected" };
-    }
-
-    // Check if admin already exists
-    const existingAdmin = await Admin.findOne({ email });
+    // Check if admin already exists (case-insensitive)
+    const existingAdmin = await Admin.findOne({ email }).lean();
     if (existingAdmin) {
       return { error: "An account with this email already exists" };
     }
@@ -85,7 +80,7 @@ export async function signUpAction(
 
     return { success: true };
   } catch (error) {
-    console.error("Sign up error:", error);
+    console.error("[Auth] Sign-up error:", error);
     return { error: "Failed to create account. Please try again." };
   }
 }
