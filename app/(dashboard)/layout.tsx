@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import NavBar from "@/ui/dashboard/navbar";
+import NavBar from "@/components/NavBar";
 
 export default async function DashboardLayout({
   children,

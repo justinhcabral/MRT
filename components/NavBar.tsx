@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { User } from "lucide-react";
-import LogoutButton from "@/ui/LogoutButton";
+import LogoutButton from "@/components/LogoutButton";
 import { redirect } from "next/navigation";
 
 export default async function NavBar() {

@@ -10,6 +10,7 @@ import { signUpSchema } from "@/types/zodtypes";
 export type AuthState = {
   error?: string;
   success?: boolean;
+  role?: "SUPER_ADMIN" | "STATION_MANAGER";
 };
 
 export async function loginAction(
@@ -17,13 +18,27 @@ export async function loginAction(
   formData: FormData
 ): Promise<AuthState> {
   try {
+    const email = formData.get("email") as string;
+
+    // Sign in the user
     await signIn("credentials", {
-      email: formData.get("email"),
+      email,
       password: formData.get("password"),
       redirect: false,
     });
 
-    return { success: true };
+    // Fetch the user's role from the database after successful sign-in
+    await connectToDB();
+    const admin = await Admin.findOne({ email }).select("role").lean();
+
+    if (!admin) {
+      return { error: "User not found" };
+    }
+
+    return {
+      success: true,
+      role: admin.role as "SUPER_ADMIN" | "STATION_MANAGER",
+    };
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
@@ -86,5 +101,5 @@ export async function signUpAction(
 }
 
 export async function logoutAction() {
-  await signOut({ redirect: false });
+  await signOut({ redirectTo: "/" });
 }

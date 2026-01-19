@@ -1,5 +1,12 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
+// maybe import a station map
+// import a live station feed?
+// create the incident list and import it to this page
+
+// interface DashboardProps {
+//   searchParams: { role?: "superadmin" | "manager" };
+// } // apply when you refactor the login page to use server components as well as use redirect to the DashboardPage on a login success with a prop of the session user passing into it.
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -7,6 +14,10 @@ export default async function DashboardPage() {
   if (!session?.user) {
     redirect("/api/auth/signin?callbackUrl=/dashboard");
   }
+
+  const role = session?.user.role || "superadmin"; // to get this, we need the login page to submit the role of the user to the props
+
+  // const data = await getDashboardData(role); * IMPLEMENT FOR FETCHING THE DATA FOR THAT SPECIFIC ROLE
 
   return (
     <div className="space-y-8">
