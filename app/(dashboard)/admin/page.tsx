@@ -23,7 +23,7 @@ export default async function DashboardPage() {
     <div className="space-y-8">
       {/* Welcome Section */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">
+        <h1 className="text-3xl font-bold text-gray-900 mt-10 ">
           Welcome, {session?.user?.name}!
         </h1>
         <p className="text-gray-600 mt-2">

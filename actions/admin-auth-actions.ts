@@ -21,7 +21,7 @@ export async function loginAction(
     const email = formData.get("email") as string;
 
     // Sign in the user
-    await signIn("credentials", {
+    await signIn("credentials", { 
       email,
       password: formData.get("password"),
       redirect: false,
